@@ -1,5 +1,7 @@
 package ch.epfl.dias;
 
+import java.io.IOException;
+
 import ch.epfl.dias.ops.Aggregate;
 import ch.epfl.dias.ops.BinaryOp;
 import ch.epfl.dias.store.DataType;
@@ -11,7 +13,7 @@ import ch.epfl.dias.store.row.RowStore;
 
 public class Main {
 
-	public static void main(String[] args) {
+	public static void main(String[] args) throws IOException {
 
 		DataType[] schema = new DataType[] { DataType.INT, DataType.INT, DataType.INT, DataType.INT, DataType.INT,
 				DataType.INT, DataType.INT, DataType.INT, DataType.INT, DataType.INT };
@@ -21,9 +23,17 @@ public class Main {
 
 		schema = new DataType[] { DataType.INT, DataType.INT, DataType.INT, DataType.INT, DataType.INT, DataType.INT,
 				DataType.INT, DataType.INT, DataType.INT, DataType.INT };
+//		for(DataType type : DataType.values()) {
+//			System.out.println(type);
+//		}
 
-		// RowStore rowstore = new RowStore(orderSchema, "input/orders_small.csv", "\\|");
-		// rowstore.load();
+		RowStore rowstore = new RowStore(orderSchema, "input/orders_small.csv", "\\|");
+		rowstore.load();
+		DBTuple tuple = rowstore.getRow(10);
+//		for(int i = 0; i < tuple.fields.length; i++) {
+//			System.out.println(tuple.fields[i]);
+//		}
+		
 
 		// PAXStore paxstore = new PAXStore(orderSchema, "input/orders_small.csv", "\\|", 3);
 		// paxstore.load();
