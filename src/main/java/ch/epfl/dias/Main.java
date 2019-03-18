@@ -27,13 +27,29 @@ public class Main {
 //			System.out.println(type);
 //		}
 
-		RowStore rowstore = new RowStore(orderSchema, "input/orders_small.csv", "\\|");
-		rowstore.load();
-		DBTuple tuple = rowstore.getRow(10);
+//		RowStore rowstore = new RowStore(orderSchema, "input/orders_small.csv", "\\|");
+//		rowstore.load();
+//		DBTuple tuple = rowstore.getRow(1);
 //		for(int i = 0; i < tuple.fields.length; i++) {
 //			System.out.println(tuple.fields[i]);
 //		}
 		
+		ColumnStore columnstoreData = new ColumnStore(schema, "input/data.csv", ",");
+		columnstoreData.load();
+		
+		ColumnStore columnstoreOrder = new ColumnStore(orderSchema, "input/orders_small.csv", "\\|", true);
+		columnstoreOrder.load();
+//		int[] columnsToGet = {0, 2, 3};
+//		DBColumn[] columnSet = columnstoreOrder.getColumns(columnsToGet);
+//		for(int i = 0; i < columnSet.length; i++) {
+//			Object[] column = columnSet[i].fields;
+//			DataType type = columnSet[i].type;
+//			System.out.println(type);
+//			for(int j = 0; j < column.length; j++) {
+//				System.out.println(column[j]);
+//			}
+//		}
+ 		
 
 		// PAXStore paxstore = new PAXStore(orderSchema, "input/orders_small.csv", "\\|", 3);
 		// paxstore.load();

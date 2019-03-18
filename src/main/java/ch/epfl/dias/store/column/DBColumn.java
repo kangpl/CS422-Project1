@@ -8,6 +8,13 @@ import ch.epfl.dias.store.DataType;
 public class DBColumn {
 
 	// TODO: Implement
+	public Object[] fields;
+	public DataType type;
+
+	public DBColumn(Object[] fields, DataType type) {
+		this.fields = fields;
+		this.type = type;
+	}
 	
 	public Integer[] getAsInteger() {
 		// TODO: Implement

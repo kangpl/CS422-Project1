@@ -6,6 +6,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.List;
 
 import ch.epfl.dias.store.DataType;
 import ch.epfl.dias.store.Store;
@@ -17,14 +18,13 @@ public class RowStore extends Store {
 	private DataType[] schema;
 	private String filename;
 	private String delimiter;
-	private ArrayList<DBTuple> tableTuple;
+	private List<DBTuple> tableTuple = new ArrayList<DBTuple>();
 
 	public RowStore(DataType[] schema, String filename, String delimiter) {
 		// TODO: Implement
 		this.schema = schema;
 		this.filename = filename;
 		this.delimiter = delimiter;
-		this.tableTuple = new ArrayList<DBTuple>();
 	}
 
 	@Override
@@ -41,7 +41,7 @@ public class RowStore extends Store {
 			// loop until all lines are read 
 			while (line != null) { 
 				
-				// use string.split to load a string array with the values from 
+				// use string.split to load a string array
 				String[] attributes = line.split(delimiter); 
 				DBTuple tuple = createTuple(attributes, schema); 
 				
@@ -54,6 +54,19 @@ public class RowStore extends Store {
 			}
 		}catch (IOException ioe) {
 			System.err.println(ioe);
+		}
+		
+	}
+
+	@Override
+	public DBTuple getRow(int rownumber) {
+		// TODO: Implement
+		try {
+			DBTuple tuple = tableTuple.get(rownumber);
+			return tuple;
+		} catch (IndexOutOfBoundsException e) {
+//			System.err.println(e);
+			return new DBTuple();
 		}
 		
 	}
@@ -88,18 +101,5 @@ public class RowStore extends Store {
 		//Create new tuple according to fields and schema
 		DBTuple tuple = new DBTuple(fields, schema);
 		return tuple;
-	}
-
-	@Override
-	public DBTuple getRow(int rownumber) {
-		// TODO: Implement
-		try {
-			DBTuple tuple = tableTuple.get(rownumber);
-			return tuple;
-		} catch (IndexOutOfBoundsException e) {
-			System.err.println(e);
-			return new DBTuple();
-		}
-		
 	}
 }
