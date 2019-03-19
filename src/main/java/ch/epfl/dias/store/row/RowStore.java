@@ -65,10 +65,8 @@ public class RowStore extends Store {
 			DBTuple tuple = tableTuple.get(rownumber);
 			return tuple;
 		} catch (IndexOutOfBoundsException e) {
-//			System.err.println(e);
 			return new DBTuple();
 		}
-		
 	}
 	
 	private static DBTuple createTuple(String[] attributes, DataType[] schema) {
@@ -95,9 +93,7 @@ public class RowStore extends Store {
 			}				
 			
 		}
-//		for(Object elem : fields) {
-//			System.out.println(elem);
-//		}
+		
 		//Create new tuple according to fields and schema
 		DBTuple tuple = new DBTuple(fields, schema);
 		return tuple;
