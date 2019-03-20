@@ -34,14 +34,14 @@ public class Main {
 //		for(int i = 0; i < tuple.fields.length; i++) {
 //			System.out.println(tuple.fields[i]);
 //		}
-		RowStore rowstoreData = new RowStore(schema, "input/data.csv", ",");
-        rowstoreData.load();
-        
-        RowStore rowstoreOrder = new RowStore(orderSchema, "input/orders_small.csv", "\\|");
-        rowstoreOrder.load();
-        
-	    ch.epfl.dias.ops.volcano.Scan scanOrder = new ch.epfl.dias.ops.volcano.Scan(rowstoreOrder);
-	    ch.epfl.dias.ops.volcano.Scan scanData = new ch.epfl.dias.ops.volcano.Scan(rowstoreData);
+//		RowStore rowstoreData = new RowStore(schema, "input/data.csv", ",");
+//        rowstoreData.load();
+//        
+//        RowStore rowstoreOrder = new RowStore(orderSchema, "input/orders_small.csv", "\\|");
+//        rowstoreOrder.load();
+//        
+//	    ch.epfl.dias.ops.volcano.Scan scanOrder = new ch.epfl.dias.ops.volcano.Scan(rowstoreOrder);
+//	    ch.epfl.dias.ops.volcano.Scan scanData = new ch.epfl.dias.ops.volcano.Scan(rowstoreData);
 //	    scan.open();
 //	    DBTuple tuple = scan.next();
 //	    for(int i = 0; i < tuple.fields.length; i++) {
@@ -107,20 +107,22 @@ public class Main {
 //	    }
 //		hashJoin.close();
 	    
-	    ch.epfl.dias.ops.volcano.ProjectAggregate agg = new ch.epfl.dias.ops.volcano.ProjectAggregate(scanOrder, Aggregate.AVG, DataType.INT, 0);
-	    agg.open();
-	    DBTuple tuple = agg.next();
-	    if(!tuple.eof) {
-	    	for(int i = 0; i < tuple.fields.length; i++) {
-				System.out.println(tuple.fields[i]);
-			}
-	    }
-		agg.close();
-//	    ColumnStore columnstoreData = new ColumnStore(schema, "input/data.csv", ",");
-//		columnstoreData.load();
-//		
-//		ColumnStore columnstoreOrder = new ColumnStore(orderSchema, "input/orders_small.csv", "\\|", true);
-//		columnstoreOrder.load();
+//	    ch.epfl.dias.ops.volcano.ProjectAggregate agg = new ch.epfl.dias.ops.volcano.ProjectAggregate(scanOrder, Aggregate.AVG, DataType.INT, 0);
+//	    agg.open();  
+//	    DBTuple tuple = agg.next();
+//	    if(!tuple.eof) {
+//	    	for(int i = 0; i < tuple.fields.length; i++) {
+//				System.out.println(tuple.fields[i]);
+//			}
+//	    }
+//		agg.close();
+	    ColumnStore columnstoreData = new ColumnStore(schema, "input/data.csv", ",");
+		columnstoreData.load();
+		
+		ColumnStore columnstoreOrder = new ColumnStore(orderSchema, "input/orders_small.csv", "\\|");
+		columnstoreOrder.load();
+		
+		
 //		int[] columnsToGet = {0, 2, 3};
 //		DBColumn[] columnSet = columnstoreOrder.getColumns(columnsToGet);
 //		for(int i = 0; i < columnSet.length; i++) {
@@ -131,7 +133,34 @@ public class Main {
 //				System.out.println(column[j]);
 //			}
 //		}
- 		
+//		int[] columnsToGet = {0, 2, 3};
+		ch.epfl.dias.ops.columnar.Scan scanData = new ch.epfl.dias.ops.columnar.Scan(columnstoreData);
+		ch.epfl.dias.ops.columnar.Scan scanOrder = new ch.epfl.dias.ops.columnar.Scan(columnstoreOrder);
+//		ch.epfl.dias.ops.columnar.Select select = new ch.epfl.dias.ops.columnar.Select(scanOrder, BinaryOp.GT, 0, 32);
+//		ch.epfl.dias.ops.columnar.Project project = new ch.epfl.dias.ops.columnar.Project(scanOrder, columnsToGet);
+//		DBColumn[] columnSet = project.execute();
+//
+//		for(int i = 0; i < columnSet.length; i++) {
+//			Object[] column = columnSet[i].fields;
+//			DataType type = columnSet[i].type;
+////			System.out.println(type);
+//			for(int j = 0; j < column.length; j++) {
+//				System.out.println(column[j]);
+//			}
+//		}
+//		ch.epfl.dias.ops.columnar.Join join = new ch.epfl.dias.ops.columnar.Join(scanOrder, scanData, 0, 3);
+		ch.epfl.dias.ops.columnar.ProjectAggregate agg = new ch.epfl.dias.ops.columnar.ProjectAggregate(scanOrder, Aggregate.AVG, DataType.DOUBLE, 3);
+		DBColumn[] columnSet = agg.execute();
+
+		for(int i = 0; i < columnSet.length; i++) {
+			Object[] column = columnSet[i].fields;
+			DataType type = columnSet[i].type;
+			System.out.println(type);
+			for(int j = 0; j < column.length; j++) {
+				System.out.println(column[j]);
+			}
+		}
+
 
 		// PAXStore paxstore = new PAXStore(orderSchema, "input/orders_small.csv", "\\|", 3);
 		// paxstore.load();

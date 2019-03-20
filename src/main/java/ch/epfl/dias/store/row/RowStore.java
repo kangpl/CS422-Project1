@@ -15,10 +15,10 @@ import ch.epfl.dias.store.Store;
 public class RowStore extends Store {
 
 	// TODO: Add required structures
-	private DataType[] schema;
-	private String filename;
-	private String delimiter;
-	private List<DBTuple> tableTuple = new ArrayList<DBTuple>();
+	public DataType[] schema;
+	public String filename;
+	public String delimiter;
+	public List<DBTuple> tableTuple = new ArrayList<>();
 
 	public RowStore(DataType[] schema, String filename, String delimiter) {
 		// TODO: Implement

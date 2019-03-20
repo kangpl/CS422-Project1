@@ -17,11 +17,11 @@ import ch.epfl.dias.store.row.DBTuple;
 public class ColumnStore extends Store {
 
 	// TODO: Add required structures
-	private DataType[] schema;
-	private String filename;
-	private String delimiter;
-	private boolean lateMaterialization;
-	private List<DBColumn> tableColumn = new ArrayList<DBColumn>();
+	public DataType[] schema;
+	public String filename;
+	public String delimiter;
+	public boolean lateMaterialization;
+	public List<DBColumn> tableColumn = new ArrayList<>();
 
 	public ColumnStore(DataType[] schema, String filename, String delimiter) {
 		this(schema, filename, delimiter, false);
@@ -40,9 +40,9 @@ public class ColumnStore extends Store {
 		// TODO: Implement
 		
 		//initialize an two-dimensional array to load primary data
-		List<List<Object>> primaryData = new ArrayList<List<Object>>(schema.length);
+		List<List<Object>> primaryData = new ArrayList<>(schema.length);
 		for(int i = 0; i < schema.length; i++) {
-			primaryData.add(new ArrayList<Object>());
+			primaryData.add(new ArrayList<>());
 		}
 		
 		//get the path of the dataset file
@@ -77,15 +77,6 @@ public class ColumnStore extends Store {
 		
 		//convert from two-dimensional ArrayList to tableColumn
 		convertToTable(primaryData);
-		
-		for(int i = 0; i < tableColumn.size(); i++) {
-			Object[] column = tableColumn.get(i).fields;
-			DataType type = tableColumn.get(i).type;
-			System.out.println(type);
-			for(int j = 0; j < column.length; j++) {
-				System.out.println(column[j]);
-			}
-		}
 	}
 
 	@Override
@@ -96,8 +87,7 @@ public class ColumnStore extends Store {
 		for(int columnNum : columnsToGet) {
 			columnSet[index] = tableColumn.get(columnNum);
 			index ++;
-		}
-		
+		}	
 		return columnSet;
 	}
 	
@@ -121,7 +111,6 @@ public class ColumnStore extends Store {
 		default:
 			field = attribute;
 			System.out.println("Something wrong with the datatype!");			
-		
 		}
 
 		return field;
