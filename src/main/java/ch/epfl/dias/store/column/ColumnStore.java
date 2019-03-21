@@ -75,7 +75,7 @@ public class ColumnStore extends Store {
 			System.err.println(ioe);
 		}
 		
-		//convert from two-dimensional ArrayList to tableColumn
+		//convert from two-dimensional ArrayList to tableColumn and idsColumn
 		convertToTable(primaryData);
 	}
 

@@ -10,12 +10,18 @@ public class DBColumn {
 	// TODO: Implement
 	public Object[] fields;
 	public DataType type;
+	public boolean lateMaterialization;
 
 	public DBColumn(Object[] fields, DataType type) {
-		this.fields = fields;
-		this.type = type;
+		this(fields, type, false);
 	}
 	
+	public DBColumn(Object[] fields, DataType type, boolean lateMaterialization) {
+		this.fields = fields;
+		this.type = type;
+		this.lateMaterialization = lateMaterialization;
+	}
+
 	public Integer[] getAsInteger() {
 		// TODO: Implement
 		Integer[] integerArray = new Integer[fields.length];

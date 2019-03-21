@@ -3,6 +3,7 @@ package ch.epfl.dias.ops.columnar;
 import ch.epfl.dias.ops.BinaryOp;
 import ch.epfl.dias.store.DataType;
 import ch.epfl.dias.store.column.DBColumn;
+import ch.epfl.dias.store.column.DBColumnId;
 import ch.epfl.dias.store.row.DBTuple;
 
 import java.util.ArrayList;
@@ -44,30 +45,61 @@ public class Join implements ColumnarOperator {
 				if(leftValue == rightValue) {
 					Integer[] indexPair = {i, j};
 					selectedIndexPair.add(indexPair);
+				}	
+			}
+		}
+		//check about materialization
+		if(leftTable[0].lateMaterialization == false && rightTable[0].lateMaterialization == false){
+			//early materialization
+			List<DBColumn> joinTable = new ArrayList<DBColumn>();
+			for(int i = 0; i < leftTable.length; i++) {
+				Object[] oldColumn = leftTable[i].fields;
+				Object[] newColumn = new Object[selectedIndexPair.size()];
+				for(int j = 0; j < selectedIndexPair.size(); j++) {
+					newColumn[j] = oldColumn[selectedIndexPair.get(j)[0]];
 				}
+				joinTable.add(new DBColumn(newColumn, leftTable[i].type));
 				
 			}
-		}
-		
-		List<DBColumn> joinTable = new ArrayList<DBColumn>();
-		for(int i = 0; i < leftTable.length; i++) {
-			Object[] oldColumn = leftTable[i].fields;
-			Object[] newColumn = new Object[selectedIndexPair.size()];
-			for(int j = 0; j < selectedIndexPair.size(); j++) {
-				newColumn[j] = oldColumn[selectedIndexPair.get(j)[0]];
-			}
-			joinTable.add(new DBColumn(newColumn, leftTable[i].type));
+			for(int i = 0; i < rightTable.length; i++) {
+				Object[] oldColumn = rightTable[i].fields;
+				Object[] newColumn = new Object[selectedIndexPair.size()];
+				for(int j = 0; j < selectedIndexPair.size(); j++) {
+					newColumn[j] = oldColumn[selectedIndexPair.get(j)[1]];
+				}
+				joinTable.add(new DBColumn(newColumn, rightTable[i].type));
+			}			
 			
+	 		return joinTable.toArray(new DBColumn[0]);
 		}
-		for(int i = 0; i < rightTable.length; i++) {
-			Object[] oldColumn = rightTable[i].fields;
-			Object[] newColumn = new Object[selectedIndexPair.size()];
-			for(int j = 0; j < selectedIndexPair.size(); j++) {
-				newColumn[j] = oldColumn[selectedIndexPair.get(j)[1]];
+		else {
+			//late materialization update ids
+			DBColumnId[] lateLeftTable = (DBColumnId[]) leftTable;
+			DBColumnId[] lateRightTable = (DBColumnId[]) rightTable;
+			
+			int leftColumnNum = leftTable.length;
+			int rightColumnNum = rightTable.length;
+			int attributesLength = selectedIndexPair.size();
+			//update ids
+			//attributes length
+			int[] newLeftIds = new int[attributesLength];
+			int[] newRightIds = new int[attributesLength];
+			for(int i = 0; i < attributesLength; i++) {
+				newLeftIds[i] = selectedIndexPair.get(i)[0];
+				newRightIds[i] = selectedIndexPair.get(i)[1];
 			}
-			joinTable.add(new DBColumn(newColumn, rightTable[i].type));
-		}			
-		
- 		return joinTable.toArray(new DBColumn[0]);
+			DBColumnId[] joinTable = new DBColumnId[leftColumnNum + rightColumnNum];
+			
+			for(int i = 0; i< leftColumnNum; i++) {
+				DBColumnId oldColumn = lateLeftTable[i];
+				joinTable[i] = new DBColumnId(oldColumn.fields, oldColumn.type, oldColumn.lateMaterialization, newLeftIds);
+			}
+			
+			for(int i = 0; i< rightColumnNum; i++) {
+				DBColumnId oldColumn = lateRightTable[i];
+				joinTable[leftColumnNum + i] = new DBColumnId(oldColumn.fields, oldColumn.type, oldColumn.lateMaterialization, newRightIds);
+			}
+			return joinTable;		
+		}		
 	}
 }
