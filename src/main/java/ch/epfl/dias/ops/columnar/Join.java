@@ -33,21 +33,29 @@ public class Join implements ColumnarOperator {
 		DBColumn[] leftTable = leftChild.execute();
 		DBColumn[] rightTable = rightChild.execute();
 		
-		//get the specific column as Integer Array
+		//Create HashTable of left table
+		HashMap<Integer, List<Integer>> leftHashTable= new HashMap<>();
 		Integer[] leftFilterColumn = leftTable[leftFieldNo].getAsInteger();
+		for(int i = 0; i < leftFilterColumn.length; i++) {
+			if(leftHashTable.get(leftFilterColumn[i]) == null) {
+				leftHashTable.put(leftFilterColumn[i], new ArrayList<Integer>());	
+			}
+			leftHashTable.get(leftFilterColumn[i]).add(i);
+		}
+
+		List<Integer[]> selectedIndexPair = new ArrayList<>();
 		Integer[] rightFilterColumn = rightTable[rightFieldNo].getAsInteger();
 		
-		List<Integer[]> selectedIndexPair = new ArrayList<>();
-		for(int i = 0; i < leftFilterColumn.length; i++) {
-			int leftValue = leftFilterColumn[i];
-			for(int j = 0; j < rightFilterColumn.length; j++) {
-				int rightValue = rightFilterColumn[j];
-				if(leftValue == rightValue) {
-					Integer[] indexPair = {i, j};
+		for(int i = 0; i < rightFilterColumn.length; i++) {
+			List<Integer> leftMatchingIndex = leftHashTable.get(rightFilterColumn[i]);
+			if(leftMatchingIndex != null) {
+				for(int j = 0; j < leftMatchingIndex.size(); j++) {
+					Integer[] indexPair = {leftMatchingIndex.get(j), i};
 					selectedIndexPair.add(indexPair);
-				}	
+				}
 			}
 		}
+		
 		//check about materialization
 		if(leftTable[0].lateMaterialization == false && rightTable[0].lateMaterialization == false){
 			//early materialization
