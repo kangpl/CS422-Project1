@@ -59,6 +59,14 @@ public class ProjectAggregate implements VolcanoOperator {
 	public void close() {
 		// TODO: Implement
 		child.close();
+		
+		intSum = 0;
+		intMin = Integer.MAX_VALUE;
+		intMax = Integer.MIN_VALUE;
+		doubleSum = 0.0;
+		doubleMin = Double.MAX_VALUE;
+		doubleMax = Double.MIN_VALUE;
+		count = 0;
 	}
 
 	private void calAggregate() {

@@ -19,6 +19,7 @@ public class HashJoin implements VolcanoOperator {
 	private VolcanoOperator rightChild;
 	private int leftFieldNo;
 	private int rightFieldNo;
+	
 	private HashMap<Integer, List<DBTuple>> hashMap = new HashMap<Integer, List<DBTuple>>();
 	private List<DBTuple> selectedLeftTuples = new ArrayList<DBTuple>();
 	private Iterator<DBTuple> iterator;
