@@ -21,7 +21,8 @@ public class ProjectAggregate implements VectorOperator {
 	public double doubleMin;
 	public double doubleMax;
 	public int count;
-
+	public DataType fieldType;
+	
 	public ProjectAggregate(VectorOperator child, Aggregate agg, DataType dt, int fieldNo) {
 		// TODO: Implement
 		this.child = child;
@@ -67,13 +68,14 @@ public class ProjectAggregate implements VectorOperator {
 	
 	private void calAggregate() {
 		DBColumn[] childVector = child.next();
+		fieldType = childVector[fieldNo].type;
 		while(childVector[0].fields.length != 0) {
 			switch(agg) {
 			case COUNT:
 				count += childVector[fieldNo].fields.length;
 				break;
 			case SUM:
-				switch(dt) {
+				switch(fieldType) {
 				case INT:
 					Integer[] intValue = childVector[fieldNo].getAsInteger();
 					for(int val : intValue) { intSum += val; }
@@ -88,7 +90,7 @@ public class ProjectAggregate implements VectorOperator {
 				}
 				break;
 			case MIN:
-				switch(dt) {
+				switch(fieldType) {
 				case INT:
 					Integer[] intValue = childVector[fieldNo].getAsInteger();
 					for(int val : intValue) { intMin = val < intMin ? val : intMin;}
@@ -102,7 +104,7 @@ public class ProjectAggregate implements VectorOperator {
 				}
 				break;
 			case MAX:
-				switch(dt) {
+				switch(fieldType) {
 				case INT:
 					Integer[] intValue = childVector[fieldNo].getAsInteger();
 					for(int val : intValue) { intMax = val > intMax ? val : intMax;}
@@ -117,7 +119,7 @@ public class ProjectAggregate implements VectorOperator {
 				break;
 			case AVG:
 				count += childVector[fieldNo].fields.length;
-				switch(dt) {
+				switch(fieldType) {
 				case INT:
 					Integer[] intValue = childVector[fieldNo].getAsInteger();
 					for(int val : intValue) { intSum += val; }
@@ -142,28 +144,28 @@ public class ProjectAggregate implements VectorOperator {
 		case COUNT:
 			return new DBColumn[] {new DBColumn(new Object[] {count}, DataType.INT)};
 		case SUM:
-			switch(dt) {
+			switch(fieldType) {
 			case INT:
 				return new DBColumn[] { new DBColumn(new Object[] {intSum}, DataType.INT)};
 			case DOUBLE:
 				return new DBColumn[] { new DBColumn(new Object[] {doubleSum}, DataType.DOUBLE)};
 			}
 		case MIN:
-			switch(dt) {
+			switch(fieldType) {
 			case INT:
 				return new DBColumn[] { new DBColumn(new Object[] {intMin}, DataType.INT)};
 			case DOUBLE:
 				return new DBColumn[] { new DBColumn(new Object[] {doubleMin}, DataType.DOUBLE)};
 			}
 		case MAX:
-			switch(dt) {
+			switch(fieldType) {
 			case INT:
 				return new DBColumn[] { new DBColumn(new Object[] {intMax}, DataType.INT)};
 			case DOUBLE:
 				return new DBColumn[] { new DBColumn(new Object[] {doubleMax}, DataType.DOUBLE)};
 			}
 		case AVG:
-			switch(dt) {
+			switch(fieldType) {
 			case INT:
 				return new DBColumn[] { new DBColumn(new Object[] {(double) intSum / (double) count}, DataType.DOUBLE)};
 			case DOUBLE:

@@ -23,6 +23,7 @@ public class ProjectAggregate implements VolcanoOperator {
 	private double doubleMin;
 	private double doubleMax;
 	private int count;
+	private DataType fieldType;
 
 	public ProjectAggregate(VolcanoOperator child, Aggregate agg, DataType dt, int fieldNo) {
 		// TODO: Implement
@@ -71,13 +72,14 @@ public class ProjectAggregate implements VolcanoOperator {
 
 	private void calAggregate() {
 		DBTuple tuple = child.next();
+		fieldType = tuple.types[fieldNo];
 		while(!tuple.eof) {
 			switch(agg) {
 			case COUNT:
 				count += 1;
 				break;
 			case SUM:
-				switch(dt) {
+				switch(fieldType) {
 				case INT:
 					int intValue = tuple.getFieldAsInt(fieldNo);
 					intSum += intValue;
@@ -91,7 +93,7 @@ public class ProjectAggregate implements VolcanoOperator {
 				}
 				break;
 			case MIN:
-				switch(dt) {
+				switch(fieldType) {
 				case INT:
 					int intValue = tuple.getFieldAsInt(fieldNo);
 					intMin = intValue < intMin ? intValue : intMin;
@@ -105,7 +107,7 @@ public class ProjectAggregate implements VolcanoOperator {
 				}
 				break;
 			case MAX:
-				switch(dt) {
+				switch(fieldType) {
 				case INT:
 					int intValue = tuple.getFieldAsInt(fieldNo);
 					intMax = intValue > intMax ? intValue : intMax;
@@ -120,7 +122,7 @@ public class ProjectAggregate implements VolcanoOperator {
 				break;
 			case AVG:
 				count += 1;
-				switch(dt) {
+				switch(fieldType) {
 				case INT:
 					int intValue = tuple.getFieldAsInt(fieldNo);
 					intSum += intValue;
@@ -143,34 +145,34 @@ public class ProjectAggregate implements VolcanoOperator {
 	private DBTuple getAggregate() {
 		switch(agg) {
 		case COUNT:
-			return new DBTuple(new Object[] {count}, new DataType[] {dt});
+			return new DBTuple(new Object[] {count}, new DataType[] {DataType.INT});
 		case SUM:
-			switch(dt) {
+			switch(fieldType) {
 			case INT:
-				return new DBTuple(new Object[] {intSum}, new DataType[] {dt});
+				return new DBTuple(new Object[] {intSum}, new DataType[] {DataType.INT});
 			case DOUBLE:
-				return new DBTuple(new Object[] {doubleSum}, new DataType[] {dt});
+				return new DBTuple(new Object[] {doubleSum}, new DataType[] {DataType.DOUBLE});
 			}
 		case MIN:
-			switch(dt) {
+			switch(fieldType) {
 			case INT:
-				return new DBTuple(new Object[] {intMin}, new DataType[] {dt});
+				return new DBTuple(new Object[] {intMin}, new DataType[] {DataType.INT});
 			case DOUBLE:
-				return new DBTuple(new Object[] {doubleMin}, new DataType[] {dt});
+				return new DBTuple(new Object[] {doubleMin}, new DataType[] {DataType.DOUBLE});
 			}
 		case MAX:
-			switch(dt) {
+			switch(fieldType) {
 			case INT:
-				return new DBTuple(new Object[] {intMax}, new DataType[] {dt});
+				return new DBTuple(new Object[] {intMax}, new DataType[] {DataType.INT});
 			case DOUBLE:
-				return new DBTuple(new Object[] {doubleMax}, new DataType[] {dt});
+				return new DBTuple(new Object[] {doubleMax}, new DataType[] {DataType.DOUBLE});
 			}
 		case AVG:
-			switch(dt) {
+			switch(fieldType) {
 			case INT:
-				return new DBTuple(new Object[] {(double) intSum / (double) count}, new DataType[] {dt});
+				return new DBTuple(new Object[] {(double) intSum / (double) count}, new DataType[] {DataType.DOUBLE});
 			case DOUBLE:
-				return new DBTuple(new Object[] {(double) doubleSum / (double) count}, new DataType[] {dt});
+				return new DBTuple(new Object[] {(double) doubleSum / (double) count}, new DataType[] {DataType.DOUBLE});
 			}
 		default:
 			return new DBTuple();	

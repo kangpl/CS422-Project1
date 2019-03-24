@@ -28,6 +28,7 @@ public class ProjectAggregate implements ColumnarOperator {
 		
 		if(wholeTable[0].lateMaterialization == false) {
 			DBColumn column = wholeTable[fieldNo];
+			DataType fieldType = column.type;
 			DBColumn[] aggResult = {null};
 			
 			switch(agg) {
@@ -36,7 +37,7 @@ public class ProjectAggregate implements ColumnarOperator {
 				aggResult[0] = new DBColumn(count, DataType.INT);
 				return aggResult;
 			case SUM:
-				switch(dt) {
+				switch(fieldType) {
 				case INT:
 					Integer[] intColumn = column.getAsInteger();
 					int intSum = 0;
@@ -46,14 +47,14 @@ public class ProjectAggregate implements ColumnarOperator {
 					return aggResult;
 				case DOUBLE:
 					Double[] doubleColumn = column.getAsDouble();
-					int doubleSum = 0;
+					double doubleSum = 0.0;
 					for(double elem : doubleColumn) { doubleSum += elem; }
 					Object[] doubleSumToObject = {doubleSum};
 					aggResult[0] = new DBColumn(doubleSumToObject, DataType.DOUBLE);
 					return aggResult;
 				}
 			case MIN:
-				switch(dt) {
+				switch(fieldType) {
 				case INT:
 					Integer[] intColumn = column.getAsInteger();
 					int intMin = Integer.MAX_VALUE;
@@ -70,7 +71,7 @@ public class ProjectAggregate implements ColumnarOperator {
 					return aggResult;
 				}
 			case MAX:
-				switch(dt) {
+				switch(fieldType) {
 				case INT:
 					Integer[] intColumn = column.getAsInteger();
 					int intMax = Integer.MIN_VALUE;
@@ -87,7 +88,7 @@ public class ProjectAggregate implements ColumnarOperator {
 					return aggResult;
 				}
 			case AVG:
-				switch(dt) {
+				switch(fieldType) {
 				case INT:
 					Integer[] intColumn = column.getAsInteger();
 					int intAvgSum = 0;
@@ -112,6 +113,7 @@ public class ProjectAggregate implements ColumnarOperator {
 		}
 		else {
 			DBColumnId column = (DBColumnId)wholeTable[fieldNo];
+			DataType fieldType = column.type;
 			DBColumnId[] aggResult = {null};
 			int[] index = {0};
 			
@@ -121,7 +123,7 @@ public class ProjectAggregate implements ColumnarOperator {
 				aggResult[0] = new DBColumnId(count, DataType.INT, true, index);
 				return aggResult;
 			case SUM:
-				switch(dt) {
+				switch(fieldType) {
 				case INT:
 					Integer[] intColumn = column.getAsInteger();
 					int intSum = 0;
@@ -131,14 +133,14 @@ public class ProjectAggregate implements ColumnarOperator {
 					return aggResult;
 				case DOUBLE:
 					Double[] doubleColumn = column.getAsDouble();
-					int doubleSum = 0;
+					double doubleSum = 0.0;
 					for(double elem : doubleColumn) { doubleSum += elem; }
 					Object[] doubleSumToObject = {doubleSum};
 					aggResult[0] = new DBColumnId(doubleSumToObject, DataType.DOUBLE, true, index);
 					return aggResult;
 				}
 			case MIN:
-				switch(dt) {
+				switch(fieldType) {
 				case INT:
 					Integer[] intColumn = column.getAsInteger();
 					int intMin = Integer.MAX_VALUE;
@@ -155,7 +157,7 @@ public class ProjectAggregate implements ColumnarOperator {
 					return aggResult;
 				}
 			case MAX:
-				switch(dt) {
+				switch(fieldType) {
 				case INT:
 					Integer[] intColumn = column.getAsInteger();
 					int intMax = Integer.MIN_VALUE;
@@ -172,7 +174,7 @@ public class ProjectAggregate implements ColumnarOperator {
 					return aggResult;
 				}
 			case AVG:
-				switch(dt) {
+				switch(fieldType) {
 				case INT:
 					Integer[] intColumn = column.getAsInteger();
 					int intAvgSum = 0;
